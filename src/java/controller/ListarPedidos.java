@@ -6,7 +6,7 @@
 
 package controller;
 
-import infra.BancoDeDados;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.Prato;
 
 /**
@@ -38,20 +39,25 @@ public class ListarPedidos extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
            
             
-           List<Serializable> pedidos =  BancoDeDados.listarDados();
+           //List<Serializable> pedidos =  BancoDeDados.listarDados();
            
-            for (Serializable pedido : pedidos) {
+            
+            HttpSession session = request.getSession(false);
+
+            List<Prato> pedidos = (List<Prato>) session.getAttribute("pedidos");
+            
+            for (Prato pedido : pedidos) {
                 Prato p = (Prato) pedido;
                 if (p != null) {
-                    out.println("<hr/> Pedido: " + p.getNome());
+                    out.println("<hr/> Pedido de  " + p.getNome());
                     out.println("<br/> Massa: " + p.getMassa());
-                    out.println("<br/> Molho: " + p.getMassa());
+                    out.println("<br/> Molho: " + p.getMolho());
                     out.println("<br/> Ingredientes: ");
 
                     List<String> ingredientes = p.getIngredientes();
                     if(ingredientes != null) {
                         for (String string : ingredientes) {
-                            out.println(string);
+                            out.println(string + "|");
                         }
                     }
                 }

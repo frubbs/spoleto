@@ -8,9 +8,6 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +19,7 @@ import model.Prato;
  *
  * @author rafa
  */
-public class Enviar extends HttpServlet {
+public class AddMolho extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,34 +34,31 @@ public class Enviar extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-           
+         String molhoEscolhida = request.getParameter("molho");
             
-            String nome = request.getParameter("nome");
+            out.println("Voce escolheu o molho: " + molhoEscolhida);
             
             HttpSession session = request.getSession(false);
             
             if(session == null) {
-                request.getRequestDispatcher("Home").forward(request, response);
+                request.getRequestDispatcher("index.html").forward(request, response);
+            }
+            else {
+                Prato pratoUsr = (Prato) session.getAttribute("p");
+                if (pratoUsr== null) {
+                    pratoUsr = new Prato();
+                }
+                
+                pratoUsr.setMolho(molhoEscolhida);
+                
+                session.setAttribute("p", pratoUsr);
+                
+                out.println("<h1>Voce escolheu " + molhoEscolhida + "</h1>");
+                out.println("<a href=\"Home\">voltar</a>");
+                
             }
             
-            Prato prato= (Prato) session.getAttribute("p");
-            
-            prato.setNome(nome);
-           // BancoDeDados.salvar(prato, nome);
-            
-            List<Prato> pedidos = (List<Prato>) session.getAttribute("pedidos");
-            
-            if (pedidos == null){
-                pedidos = new ArrayList<Prato>();
-            }
-            
-            pedidos.add(prato);
-            
-            session.setAttribute("pedidos", pedidos);
-            
-            out.println("<h1>Pedido salvo com sucesso!</h1>");
-             out.println("<a href=\"Home\">voltar</a>");
-        }
+        }        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -6,9 +6,9 @@
 
 package controller;
 
+import infra.IngredientesDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -22,7 +22,7 @@ import model.Prato;
  *
  * @author rafa
  */
-public class Enviar extends HttpServlet {
+public class AddIngredientes extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,33 +37,43 @@ public class Enviar extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+       
+            
+            List<String> escolhidos = new ArrayList<String>(); 
            
             
-            String nome = request.getParameter("nome");
+            for (String string : new IngredientesDAO().listarIngredientesDisponiveis()) {
+                String ing = request.getParameter(string);
+                
+               // out.println("<br/>ing:" + ing);
+                
+                if (ing != null && !ing.isEmpty())
+                    escolhidos.add(string);
+            }
+            
+            
             
             HttpSession session = request.getSession(false);
             
             if(session == null) {
-                request.getRequestDispatcher("Home").forward(request, response);
+                request.getRequestDispatcher("index.html").forward(request, response);
             }
-            
-            Prato prato= (Prato) session.getAttribute("p");
-            
-            prato.setNome(nome);
-           // BancoDeDados.salvar(prato, nome);
-            
-            List<Prato> pedidos = (List<Prato>) session.getAttribute("pedidos");
-            
-            if (pedidos == null){
-                pedidos = new ArrayList<Prato>();
+            else {
+                Prato pratoUsr = (Prato) session.getAttribute("p");
+                if (pratoUsr== null) {
+                    pratoUsr = new Prato();
+                }
+                
+                pratoUsr.setIngredientes(escolhidos);
+                
+                session.setAttribute("p", pratoUsr);
+                
+                for (String string : escolhidos) {
+                    out.println("<h1>Voce escolheu " + string + "</h1>");
+                }
+                out.println("<a href=\"Home\">voltar</a>");
+                
             }
-            
-            pedidos.add(prato);
-            
-            session.setAttribute("pedidos", pedidos);
-            
-            out.println("<h1>Pedido salvo com sucesso!</h1>");
-             out.println("<a href=\"Home\">voltar</a>");
         }
     }
 

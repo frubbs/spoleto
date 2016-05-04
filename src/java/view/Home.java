@@ -6,6 +6,7 @@
 
 package view;
 
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -42,6 +43,8 @@ public class Home extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Spoleto</h1>");
+
+            
             
             HttpSession session = request.getSession();
             
@@ -57,14 +60,30 @@ public class Home extends HttpServlet {
             }
             
             if(pratoUsuario.getMassa() == null) {
-                out.println("Escolha uma massa <a href=\"Massas.html\">aqui</a>");
+                out.println("<br/> Escolha uma massa <a href=\"Massas.html\">aqui</a>");
             }
             else {
-                out.println("Massa selecionada: " + pratoUsuario.getMassa() + ". <a href=\"Massas.html\">(trocar)</a>");
+                out.println("<br/> Massa selecionada: " + pratoUsuario.getMassa() + ". <a href=\"Massas.html\">(trocar)</a>");
+            }
+            if(pratoUsuario.getMolho() == null) {
+                out.println("<br/> Escolha um molho <a href=\"Molhos.html\">aqui</a>");
+            }
+            else {
+                out.println("<br/> Massa selecionada: " + pratoUsuario.getMolho() + ". <a href=\"Molhos.html\">(trocar)</a>");
+            }
+            if(pratoUsuario.getIngredientes() == null || pratoUsuario.getIngredientes().isEmpty() ) {
+                out.println("<br/> Escolha ingredientes <a href=\"Ingredientes.html\">aqui</a>");
+            }
+            else {
+                out.println("<br/> Ingredientes selecionados: <br/>");
+                for (String ingrediente : pratoUsuario.getIngredientes()) {
+                    out.println(ingrediente + "<br/>");
+                }
+                out.println("<br/> Escolha mais ingredientes <a href=\"Ingredientes.html\">aqui</a>");
             }
                 
             
-            out.println("");
+            out.println("<br/> ");
             out.println("");
             out.println("<a href=\"Enviar.html\">Enviar Pedido</a>");
             
